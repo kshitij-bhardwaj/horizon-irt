@@ -1,0 +1,8 @@
+{
+  "full_suite": {
+    "median_tokens_M": 134.629147,
+    "median_sd": 0.24187099238942467,
+    "median_abs_err_ref": 0.12033007063207335,
+    "coverage95_ref": 0.9925
+  }
+}

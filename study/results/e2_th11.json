@@ -1,0 +1,178 @@
+{
+  "report": "time-horizon-1-1",
+  "n_runs": 23235,
+  "n_cells": 4523,
+  "A": 20,
+  "T": 228,
+  "models": [
+    {
+      "model": "B0 agent-only",
+      "k_params": 20,
+      "loglik": -12292.787411939977,
+      "AIC": 24625.574823879953,
+      "BIC": 24786.643124710336,
+      "tau": 0.0,
+      "converged": true
+    },
+    {
+      "model": "B2 common slope",
+      "k_params": 21,
+      "loglik": -5733.963622379499,
+      "AIC": 11509.927244758997,
+      "BIC": 11679.048960630898,
+      "tau": 0.0,
+      "converged": true
+    },
+    {
+      "model": "B1 METR (agent slopes)",
+      "k_params": 40,
+      "loglik": -5687.444097921927,
+      "AIC": 11454.888195843854,
+      "BIC": 11777.024797504617,
+      "tau": 0.0,
+      "converged": true
+    },
+    {
+      "model": "R Rasch",
+      "k_params": 21,
+      "loglik": -3222.273566357827,
+      "AIC": 6486.547132715654,
+      "BIC": 6655.668848587555,
+      "tau": 6.41489561034638,
+      "converged": true
+    },
+    {
+      "model": "L LLTM-R",
+      "k_params": 22,
+      "loglik": -3056.123519494883,
+      "AIC": 6156.247038989766,
+      "BIC": 6333.422169903186,
+      "tau": 2.7351835543204506,
+      "converged": true
+    },
+    {
+      "model": "M agent-slope LLTM-R",
+      "k_params": 41,
+      "loglik": -2919.5685185598913,
+      "AIC": 5921.137037119783,
+      "BIC": 6251.327053822065,
+      "tau": 2.917883903254647,
+      "converged": true
+    }
+  ],
+  "lrt": {
+    "B2 vs B1 (agent slopes; df=A-1)": {
+      "stat": 93.03904891514321,
+      "p": 9.557498828718074e-12
+    },
+    "B1 vs M (tau>0; boundary)": {
+      "stat": 5535.7511587240715,
+      "p": 0.0
+    },
+    "B2 vs L (tau>0; boundary)": {
+      "stat": 5355.680205769231,
+      "p": 0.0
+    },
+    "L vs M (agent slopes given tau; df=A-1)": {
+      "stat": 273.11000186998353,
+      "p": 6.253281170241961e-47
+    },
+    "R vs L (length given tau; df=1)": {
+      "stat": 332.30009372588756,
+      "p": 3.03269729608568e-74
+    }
+  },
+  "tau_M": 2.917883903254647,
+  "tau_M_profile_ci95": [
+    2.591831426590454,
+    3.3120656347775
+  ],
+  "tau_L": 2.7351835543204506,
+  "tau_R": 6.41489561034638,
+  "decomposition": {
+    "beta_L": -1.132877004004028,
+    "var_length": 29.658706621395527,
+    "tau2_L": 7.481229075825053,
+    "R2_length_latent": 0.7985664504964417,
+    "R2_length_vs_rasch": 0.8182000472144231,
+    "icc_task_given_length": 0.6945651803431638
+  },
+  "u_by_source": [
+    {
+      "source": "HCAST",
+      "n": 157,
+      "mean_u": -0.1219904500041454,
+      "se": 0.234667633435294
+    },
+    {
+      "source": "RE-Bench",
+      "n": 5,
+      "mean_u": 0.7040660317258152,
+      "se": 0.5697337397227514
+    },
+    {
+      "source": "SWAA",
+      "n": 66,
+      "mean_u": 0.23686910012960255,
+      "se": 0.1819245545872145
+    }
+  ],
+  "mixed_cells": {
+    "M": {
+      "cells": 4521,
+      "observed": 0.15925680159256803,
+      "expected": 0.2227553506090722,
+      "z": -14.704662775992386
+    },
+    "B1 (tau=0)": {
+      "cells": 4521,
+      "observed": 0.15925680159256803,
+      "expected": 0.40227572032150266,
+      "z": -45.42487648722352
+    }
+  },
+  "slopes_B1": {
+    "Claude 3 Opus (Inspect)": -0.5803346704480367,
+    "Claude 3.5 Sonnet (New) (Inspect)": -0.47489773413604036,
+    "Claude 3.5 Sonnet (Old) (Inspect)": -0.5404336850710049,
+    "Claude 3.7 Sonnet (Inspect)": -0.5486133407678987,
+    "Claude 4 Opus (Inspect)": -0.5611586812038607,
+    "Claude 4.1 Opus (Inspect)": -0.6306073413419255,
+    "Claude Opus 4.5 (Inspect)": -0.5225838851416615,
+    "Claude Opus 4.6 (Inspect)": -0.38708563912348865,
+    "GPT-4 0314": -0.6760181700606794,
+    "GPT-4 1106 (Inspect)": -0.6262811885789115,
+    "GPT-4 Turbo (Inspect)": -0.7308972926875031,
+    "GPT-4o (Inspect)": -0.6160178770420971,
+    "GPT-5 (Inspect)": -0.5805898351760646,
+    "GPT-5.1-Codex-Max (Inspect)": -0.6549817412950113,
+    "GPT-5.2": -0.5914555419631675,
+    "GPT-5.3-Codex": -0.5033665006821701,
+    "Gemini 3 Pro": -0.6401779979474007,
+    "o1 (Inspect)": -0.5670902659325172,
+    "o1-preview": -0.6335171691921841,
+    "o3 (Inspect)": -0.7174647655909668
+  },
+  "slopes_M": {
+    "Claude 3 Opus (Inspect)": -1.2218844444605506,
+    "Claude 3.5 Sonnet (New) (Inspect)": -1.0372549841270722,
+    "Claude 3.5 Sonnet (Old) (Inspect)": -1.19568087206782,
+    "Claude 3.7 Sonnet (Inspect)": -1.1038982592455997,
+    "Claude 4 Opus (Inspect)": -1.077131964700446,
+    "Claude 4.1 Opus (Inspect)": -1.156989126585542,
+    "Claude Opus 4.5 (Inspect)": -0.8776764405469382,
+    "Claude Opus 4.6 (Inspect)": -0.608633105152695,
+    "GPT-4 0314": -1.4412247877537319,
+    "GPT-4 1106 (Inspect)": -1.3344016847044131,
+    "GPT-4 Turbo (Inspect)": -1.5883827255055578,
+    "GPT-4o (Inspect)": -1.3572912820799081,
+    "GPT-5 (Inspect)": -0.9989605633048426,
+    "GPT-5.1-Codex-Max (Inspect)": -1.0984839884660238,
+    "GPT-5.2": -0.9040686650191986,
+    "GPT-5.3-Codex": -0.7904113151805278,
+    "Gemini 3 Pro": -1.07939287081217,
+    "o1 (Inspect)": -1.1484330629388924,
+    "o1-preview": -1.3687809625781158,
+    "o3 (Inspect)": -1.2472253943821796
+  }
+}

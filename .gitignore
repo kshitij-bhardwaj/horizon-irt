@@ -1,0 +1,17 @@
+# METR's data is fetched by scripts/setup.sh, never committed
+eval-analysis-public/
+# environments and caches
+.venv/
+.venv-*/
+__pycache__/
+*.pyc
+.DS_Store
+# secrets: API keys belong in environment variables, never in the repo
+.env
+*.key
+# run logs contain machine-specific paths
+logs/
+# full export includes METR-derived per-run counts; the public site uses docs/data.json
+prototype/web/data.json
+# written report: added in a later release
+report/

@@ -1,0 +1,58 @@
+{
+  "agents": [
+    "Claude 3 Opus",
+    "Claude 3.5 Sonnet (New)",
+    "Claude 3.5 Sonnet (Old)",
+    "Claude 3.7 Sonnet",
+    "Claude 4 Opus",
+    "Claude 4.1 Opus",
+    "Claude Opus 4.5",
+    "GPT-4 0314",
+    "GPT-4 1106",
+    "GPT-4 Turbo",
+    "GPT-4o",
+    "GPT-5",
+    "GPT-5.1-Codex-Max",
+    "o1",
+    "o1-preview",
+    "o3"
+  ],
+  "n": 16,
+  "mean_shift": {
+    "METR": -0.24486101612224598,
+    "METR + hier. slope": -0.24178761869457932,
+    "IRT (M)": 0.2348135168306283
+  },
+  "sd_resid": {
+    "METR": 0.5745759027312292,
+    "METR + hier. slope": 0.5990846274154138,
+    "IRT (M)": 0.46107707574650814
+  },
+  "sd_ci": {
+    "METR": [
+      0.4131301845739024,
+      0.6792285533969054
+    ],
+    "METR + hier. slope": [
+      0.42813876782976834,
+      0.7093288831837371
+    ],
+    "IRT (M)": [
+      0.30492512217436707,
+      0.5677345175760724
+    ]
+  },
+  "ratio_IRT_over_METR": {
+    "point": 0.8024650417025709,
+    "ci": [
+      0.5042707266816088,
+      1.2305251555472032
+    ],
+    "p_ratio_ge_1": 0.166
+  },
+  "corr_across_suites": {
+    "METR": 0.9931703637614488,
+    "METR + hier. slope": 0.9945858222837108,
+    "IRT (M)": 0.9937176629666964
+  }
+}

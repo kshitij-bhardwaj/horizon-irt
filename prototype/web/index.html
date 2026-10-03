@@ -1,0 +1,656 @@
+<title>HorizonCAT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --ink:#14171c; --ink2:#4a525e; --muted:#6b7380; --rule:#e3e6ec; --rule2:#d3d8e0;
+  --grid:#eceef2; --accent:#2a78d6; --accent-ink:#ffffff; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#4a3aa7;
+  --good:#0ca30c; --warn:#b97a00; --crit:#d03b3b; --good-bg:#e8f6e8; --warn-bg:#fdf3dc; --crit-bg:#fbe9e9; --info-bg:#e8f1fc;
+  --font:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121418; --surface:#1a1d22; --ink:#eef0f3; --ink2:#c0c6cf; --muted:#9aa2ad; --rule:#2a2f37; --rule2:#363c46;
+  --grid:#23272e; --accent:#3987e5; --accent-ink:#ffffff; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#9085e9;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#ef6b6b; --good-bg:#16301a; --warn-bg:#33290f; --crit-bg:#3a1c1c; --info-bg:#172a42;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121418; --surface:#1a1d22; --ink:#eef0f3; --ink2:#c0c6cf; --muted:#9aa2ad; --rule:#2a2f37; --rule2:#363c46;
+  --grid:#23272e; --accent:#3987e5; --accent-ink:#ffffff; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#9085e9;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#ef6b6b; --good-bg:#16301a; --warn-bg:#33290f; --crit-bg:#3a1c1c; --info-bg:#172a42;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{text-wrap:balance;margin:0;font-weight:600}
+h1{font-size:26px;letter-spacing:-0.01em}
+h2{font-size:18px}
+h3{font-size:14px;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+p{margin:0;max-width:72ch}
+.mono{font-family:var(--mono);font-size:12.5px}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+header{display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--rule);padding-block:0 14px}
+header .lede{color:var(--ink2);font-size:15px}
+header .meta{color:var(--muted);font-size:12.5px}
+nav[role=tablist]{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+nav button{font:inherit;font-weight:500;color:var(--ink2);background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;cursor:pointer;margin-bottom:-1px}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+nav button:hover{color:var(--ink)}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:18px}
+.run-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.run-layout{grid-template-columns:1fr}}
+.run-layout>*,.two>*,.panel>*{min-width:0}
+.controls{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.field .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+select,input[type=number]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--rule2);border-radius:6px;padding:6px 8px;width:100%;max-width:100%}
+.field label .mono,.nt{text-transform:none;letter-spacing:0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.radios{display:flex;flex-direction:column;gap:4px}
+.radios label{display:flex;gap:8px;align-items:baseline;font-size:13.5px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.radios small{color:var(--muted);font-size:12px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:500;border-radius:6px;padding:7px 12px;border:1px solid var(--rule2);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.readout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+@media (max-width:640px){.readout{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.readout>div{background:var(--surface);padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.readout .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.readout .v{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.readout .s{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.chip.run{background:var(--info-bg);color:var(--accent)}
+.chip.ok{background:var(--good-bg);color:var(--good)}
+.chip.sat{background:var(--warn-bg);color:var(--warn)}
+.chip.crit{background:var(--crit-bg);color:var(--crit)}
+.chip.flag{background:var(--bg);border:1px solid var(--rule2);color:var(--ink2)}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.card .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{fill:var(--muted);font-family:var(--font);font-size:11px}
+.chart .axis{stroke:var(--rule2)}
+.chart .gridl{stroke:var(--grid)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+.sw.dot{width:9px;height:9px;border-radius:50%}
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:500;background:var(--surface);position:sticky;top:0}
+th.sortable{cursor:pointer}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.scroll{max-height:340px;overflow:auto}
+.ok-t{color:var(--good);font-weight:600}.no-t{color:var(--crit);font-weight:600}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.note{border-left:3px solid var(--rule2);padding:2px 0 2px 12px;color:var(--ink2);font-size:13.5px}
+.prose{display:flex;flex-direction:column;gap:12px;max-width:78ch}
+.prose ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.eq{font-family:var(--mono);font-size:12.5px;background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;overflow-x:auto;white-space:pre}
+a{color:var(--accent)}
+#tip{position:fixed;pointer-events:none;z-index:10;background:var(--surface);color:var(--ink);border:1px solid var(--rule2);border-radius:6px;padding:6px 8px;font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:260px}
+.flagfilters{display:flex;gap:6px;flex-wrap:wrap}
+.flagfilters button{font:inherit;font-size:12px;border-radius:999px;padding:3px 10px;border:1px solid var(--rule2);background:var(--surface);color:var(--ink2);cursor:pointer}
+.flagfilters button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+#loading{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>HorizonCAT</h1>
+    <p class="lede">Measure an AI agent's 50% time horizon by running the tasks that tell you the most per token, and find out when the task suite can no longer measure it.</p>
+    <p class="meta" id="meta">METR Time Horizon 1.1 task suite · loading data…</p>
+  </header>
+
+  <nav role="tablist" aria-label="Sections">
+    <button role="tab" id="t-run" aria-selected="true" aria-controls="p-run">Run an evaluation</button>
+    <button role="tab" id="t-range" aria-selected="false" aria-controls="p-range">Measurement range</button>
+    <button role="tab" id="t-audit" aria-selected="false" aria-controls="p-audit">Task audit</button>
+    <button role="tab" id="t-back" aria-selected="false" aria-controls="p-back">Back-test</button>
+    <button role="tab" id="t-method" aria-selected="false" aria-controls="p-method">Method &amp; novelty</button>
+  </nav>
+
+  <p id="loading">Loading the item bank and run data…</p>
+
+  <!-- RUN -->
+  <section class="panel" id="p-run" role="tabpanel" aria-labelledby="t-run" hidden>
+    <div class="run-layout">
+      <div class="controls">
+        <div class="field">
+          <label for="agent">Agent</label>
+          <select id="agent"></select>
+          <small class="muted" id="agentNote"></small>
+        </div>
+        <div class="field" id="hypoFields" hidden>
+          <label for="hypoH">True horizon <span class="mono" id="hypoHv"></span></label>
+          <input type="range" id="hypoH" min="0" max="14" step="0.1" value="10.5">
+          <label for="hypoB">Slope <span class="nt">β</span> <span class="mono" id="hypoBv"></span></label>
+          <input type="range" id="hypoB" min="-1.6" max="-0.3" step="0.05" value="-0.9">
+          <label for="seed">Random seed</label>
+          <input type="number" id="seed" value="1" min="1" max="9999">
+        </div>
+        <div class="field">
+          <span class="lbl">Task selection</span>
+          <div class="radios" id="policy">
+            <label><input type="radio" name="pol" value="cost1" checked> Adaptive, cost-aware <small>γ = 1</small></label>
+            <label><input type="radio" name="pol" value="cost05"> Adaptive, half cost-aware <small>γ = 0.5</small></label>
+            <label><input type="radio" name="pol" value="info"> Adaptive, information only <small>γ = 0</small></label>
+            <label><input type="radio" name="pol" value="random"> Random task</label>
+            <label><input type="radio" name="pol" value="stratified"> Length-stratified</label>
+            <label><input type="radio" name="pol" value="midpass"> Static 30–70% pass-rate filter</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="target">Stop when uncertainty is within <span class="mono" id="targetv"></span></label>
+          <input type="range" id="target" min="0.25" max="1" step="0.05" value="0.5">
+        </div>
+        <div class="btns">
+          <button class="btn primary" id="go">Run to stop</button>
+          <button class="btn" id="step">Run 1 task</button>
+          <button class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="readout" aria-live="polite">
+          <div><span class="k">50% horizon</span><span class="v" id="rEst">–</span><span class="s" id="rCI">no tasks run</span></div>
+          <div><span class="k">Status</span><span class="v"><span class="chip run" id="rStatus">Ready</span></span><span class="s" id="rStatusNote">&nbsp;</span></div>
+          <div><span class="k">Tasks run</span><span class="v" id="rTasks">0</span><span class="s" id="rTasksNote">of 228</span></div>
+          <div><span class="k">Tokens spent</span><span class="v" id="rTok">0</span><span class="s" id="rTokNote">&nbsp;</span></div>
+        </div>
+        <div class="card">
+          <div class="head"><h2>Where is the horizon?</h2><div class="legend" id="postLegend"></div></div>
+          <svg class="chart" id="postChart" viewBox="0 0 760 250" role="img" aria-label="Posterior distribution of the agent's 50% horizon"></svg>
+        </div>
+        <div class="two">
+          <div class="card">
+            <div class="head"><h2>Uncertainty vs tokens</h2></div>
+            <svg class="chart" id="sdChart" viewBox="0 0 380 220" role="img" aria-label="Posterior SD of log2 horizon against tokens spent"></svg>
+          </div>
+          <div class="card">
+            <div class="head"><h2>Tasks run</h2><span class="muted" style="font-size:12px">newest first</span></div>
+            <div class="tablewrap scroll"><table><thead><tr><th>#</th><th>Task</th><th class="r">Human time</th><th class="r">Tokens</th><th>Result</th><th class="r">SD after</th></tr></thead><tbody id="log"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RANGE -->
+  <section class="panel" id="p-range" role="tabpanel" aria-labelledby="t-range" hidden>
+    <div class="card">
+      <div class="head"><h2>How precisely can this suite measure a horizon?</h2><div class="legend" id="rangeLegend"></div></div>
+      <p class="muted">Standard error of log<sub>2</sub> H50 from one run of every task, for an agent with the population slope, which is estimated along with the horizon. Below the green line (±0.5 doublings) the suite measures well. For longer horizons nearly every task is a success, and the data can no longer tell a longer horizon from a flatter curve. METR's trend fit excludes horizons above 16 hours.</p>
+      <svg class="chart" id="rangeChart" viewBox="0 0 760 280" role="img" aria-label="Standard error of the horizon estimate across horizons"></svg>
+    </div>
+    <div class="two">
+      <div class="card">
+        <h2>Extend the suite</h2>
+        <p class="muted">How many new tasks of a given length bring a target horizon to ±0.5 doublings? New tasks have unknown difficulty, drawn from the residual spread τ.</p>
+        <div class="field"><label for="dH">Horizon to measure <span class="mono" id="dHv"></span></label><input type="range" id="dH" min="8" max="14" step="0.1" value="11.49"></div>
+        <div class="field"><label for="dL">Length of each new task <span class="mono" id="dLv"></span></label><input type="range" id="dL" min="8" max="14" step="0.1" value="11.9"></div>
+        <div class="readout" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div><span class="k">New tasks needed</span><span class="v" id="dN">–</span><span class="s" id="dSE"></span></div>
+          <div><span class="k">Tokens for one run each</span><span class="v" id="dTok">–</span><span class="s" id="dTokNote"></span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Hypothetical frontier agents</h2>
+        <p class="muted">Adaptive runs on simulated agents (30 each, no task cap), current suite vs adding 20 tasks at 1.5× the horizon. Cost-aware selection saves tokens but avoids the expensive long tasks that frontier agents need.</p>
+        <div class="tablewrap"><table><thead><tr><th>Horizon</th><th>Suite</th><th>Selection</th><th class="r">Reached ±0.5</th><th class="r">Saturated</th><th class="r">Median SD</th><th class="r">95% coverage</th></tr></thead><tbody id="simRows"></tbody></table></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Testing newer models (GPT-5.6 Sol, GPT-6.1 Sol, Claude Opus 5.5, …)</h2>
+      <div class="prose" id="newModels"></div>
+    </div>
+  </section>
+
+  <!-- AUDIT -->
+  <section class="panel" id="p-audit" role="tabpanel" aria-labelledby="t-audit" hidden>
+    <div class="card">
+      <div class="head"><h2>Difficulty beyond task length</h2><div class="legend" id="auditLegend"></div></div>
+      <p class="muted">Each point is a task: its human time, and how much harder (below 0) or easier (above 0) agents found it than its length predicts (posterior mean û, logits). Ringed points carry an audit flag. Hover for details.</p>
+      <svg class="chart" id="auditChart" viewBox="0 0 760 300" role="img" aria-label="Task residual difficulty against human time"></svg>
+    </div>
+    <div class="card">
+      <div class="head"><h2>Tasks</h2><div class="flagfilters" id="flagFilters"></div></div>
+      <div class="tablewrap scroll" style="max-height:420px"><table><thead><tr>
+        <th class="sortable" data-k="id">Task</th><th class="sortable" data-k="source">Source</th><th class="r sortable" data-k="minutes">Human time</th>
+        <th class="r sortable" data-k="solve">Solved</th><th class="r sortable" data-k="u">û ± sd</th><th class="r sortable" data-k="info12h">Info @ 12 h</th>
+        <th class="r sortable" data-k="tokens">Tokens</th><th>Flags</th></tr></thead><tbody id="auditRows"></tbody></table></div>
+      <p class="muted" style="font-size:12.5px" id="flagHelp"></p>
+    </div>
+  </section>
+
+  <!-- BACKTEST -->
+  <section class="panel" id="p-back" role="tabpanel" aria-labelledby="t-back" hidden>
+    <div class="card">
+      <h2>Replay on real runs</h2>
+      <p class="muted" id="backIntro"></p>
+      <p class="note" id="calNote"></p>
+      <div class="tablewrap"><table><thead><tr><th>Task selection</th><th class="r">Reached ±0.5</th><th class="r">Median tasks</th><th class="r">Median tokens</th><th class="r">Share of full-suite tokens</th><th class="r">Median |error|</th><th class="r">95% coverage</th><th class="r">σ<sub>v</sub> = 0: tokens · coverage</th></tr></thead><tbody id="backRows"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="head"><h2>Uncertainty for a given token budget</h2><div class="legend" id="backLegend"></div></div>
+      <svg class="chart" id="backChart" viewBox="0 0 760 280" role="img" aria-label="Median posterior SD against share of full-suite tokens, by policy"></svg>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section class="panel" id="p-method" role="tabpanel" aria-labelledby="t-method" hidden>
+    <div class="card prose">
+      <h2>Model</h2>
+      <p>Each task t has a human time; x<sub>t</sub> = log<sub>2</sub> minutes. An agent with horizon h (log<sub>2</sub> minutes) and slope β succeeds on one run with probability</p>
+      <div class="eq">P(success | h, β, u_t, v_at) = σ( β · (x_t − h) + u_t + v_at ),   u_t ~ N(0, τ²),  v_at ~ N(0, σ_v²),  β &lt; 0</div>
+      <p>u<sub>t</sub> is the task's difficulty beyond its length. Its posterior comes from every other agent's runs (marginal maximum likelihood, leave-one-agent-out) and is stored as 10 equal-mass points, so each prediction averages over what is still unknown about the task. v<sub>at</sub> is this agent's own quirk on this task. The first back-test showed that leaving it out makes intervals too narrow, so σ<sub>v</sub> is estimated by held-out predictive likelihood across agents (<span id="svText">see Back-test</span>).</p>
+      <h2>Choosing the next task</h2>
+      <div class="eq">score_t = [ Var(h) − E_y Var(h | y_t) ] / tokens_t^γ</div>
+      <p>The tool runs the task with the highest expected reduction in the variance of h per token. γ = 0 ignores cost, as in classical adaptive testing. It stops when the SD of h reaches the target, or declares the suite <em>saturated</em> when no remaining task can reduce the variance by 1% and more than 20% of the posterior lies beyond the longest task.</p>
+      <h2>What this builds on</h2>
+      <ul>
+        <li><a href="https://arxiv.org/abs/2503.14499" target="_blank" rel="noopener">METR, Measuring AI Ability to Complete Long Tasks</a> and Time Horizon 1.1: the tasks, human-time anchors, horizon definition and public run data.</li>
+        <li><a href="https://arxiv.org/abs/2602.07267" target="_blank" rel="noopener">BRIDGE (Liu, Gala, Nilaksh, Bahdanau, Reddy, Larochelle, 2026)</a>: IRT difficulty is linear in log human time, so human time is a calibrated difficulty scale. HorizonCAT uses that as its anchor. Unlike BRIDGE, it keeps human time fixed and models only the residual as a random effect, so horizons come out in minutes directly and the remaining task uncertainty is carried into every decision. That is one form of the "uncertainty-aware difficulty estimation" BRIDGE lists as future work.</li>
+        <li>Adaptive testing for language models (<a href="https://arxiv.org/abs/2511.04689" target="_blank" rel="noopener">ATLAS</a>, Fluid Benchmarking), static subsets (tinyBenchmarks), and the 30–70% pass-rate filter of <a href="https://arxiv.org/abs/2603.23749" target="_blank" rel="noopener">Efficient Benchmarking of AI Agents</a>, included here as a baseline.</li>
+      </ul>
+      <h2>What is new here</h2>
+      <ul>
+        <li>The target is a horizon in human minutes, not an ability score. Slope uncertainty is integrated out.</li>
+        <li>Selection weighs information against real token cost, which varies about 2500× across METR tasks.</li>
+        <li>Task difficulty enters as a posterior, not a point estimate.</li>
+        <li>A replay back-test on real agent runs reports calibration (interval coverage), not only error.</li>
+        <li>Saturation is detected explicitly, with a calculator for how to extend the suite.</li>
+      </ul>
+      <h2>Not claimed</h2>
+      <p>That adaptive testing saves cost in general, which is well known, or that difficulty tracks log human time (BRIDGE, METR). There are no results for models without public per-task runs.</p>
+      <h2>Limits</h2>
+      <ul>
+        <li>One run per task. Repeated runs of a task are correlated through u<sub>t</sub> and are not modelled.</li>
+        <li>Token cost is a median across past agents. A new agent may use far more or fewer tokens.</li>
+        <li>The token cost of hypothetical long tasks is extrapolated from tasks of 16 minutes and longer.</li>
+        <li>The agent-by-task term v is one shared Gaussian scale. Real quirks may cluster by task family or by scaffold.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+"use strict";
+// ---------- formatting ----------
+const fmtMin = m => {
+  if (!isFinite(m)) return "–";
+  const s = m * 60;
+  if (s < 60) return `${s < 10 ? s.toFixed(1) : Math.round(s)} s`;
+  if (m < 60) return `${m < 10 ? m.toFixed(1) : Math.round(m)} min`;
+  const h = m / 60;
+  if (h < 24) { const hh = Math.floor(h), mm = Math.round((h - hh) * 60); return mm ? `${hh} h ${mm} min` : `${hh} h`; }
+  const d = h / 24;
+  return d < 14 ? `${d.toFixed(1)} days` : `${(d / 7).toFixed(1)} weeks`;
+};
+const fmtH = h => fmtMin(Math.pow(2, h));
+const fmtTok = t => t >= 1e9 ? (t / 1e9).toFixed(2) + " B" : t >= 1e6 ? (t / 1e6).toFixed(t >= 1e7 ? 0 : 1) + " M" : t >= 1e3 ? (t / 1e3).toFixed(t >= 1e4 ? 0 : 1) + " k" : String(Math.round(t));
+const pct = v => (v * 100).toFixed(v < 0.1 ? 1 : 0) + "%";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ---------- math ----------
+const sig = z => 1 / (1 + Math.exp(-z));
+function normInv(p) { // Acklam's rational approximation, |rel err| < 1.2e-9
+  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+  const pl=0.02425; let q,r;
+  if (p < pl) { q = Math.sqrt(-2*Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if (p > 1-pl) { q = Math.sqrt(-2*Math.log(1-p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  q = p-0.5; r = q*q; return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+
+// ---------- engine (mirrors prototype/horizoncat/engine.py) ----------
+let D = null;
+const HS = [];
+function makeGrid(mu_b, sd_b) {
+  const g = D.meta.grid, nb = g.n_beta, sd = sd_b * g.beta_inflate;
+  const nh = Math.round((g.h_max - g.h_min) / g.h_step) + 1;
+  HS.length = 0; for (let i = 0; i < nh; i++) HS.push(g.h_min + i * g.h_step);
+  const bs = []; for (let j = 0; j < nb; j++) bs.push(Math.min(mu_b + sd * normInv((j + 0.5) / nb), g.beta_cap));
+  const G = nh * nb, h = new Float64Array(G), beta = new Float64Array(G);
+  for (let i = 0; i < nh; i++) for (let j = 0; j < nb; j++) { h[i * nb + j] = HS[i]; beta[i * nb + j] = bs[j]; }
+  return { h, beta, G, nh, nb };
+}
+function predictive(x, u, grid) { // (T x G) single-run success probability; u integrated over K points, v over 7 GH nodes
+  const T = x.length, K = u[0].length, P = new Float64Array(T * grid.G), sv = D.meta.sigma_v || 0;
+  const vs = sv > 0 ? D.meta.gh_v.map(z => sv * z) : [0], ws = sv > 0 ? D.meta.gh_w : [1];
+  for (let t = 0; t < T; t++) {
+    const ut = u[t], xt = x[t], off = t * grid.G;
+    for (let g = 0; g < grid.G; g++) {
+      const base = grid.beta[g] * (xt - grid.h[g]); let s = 0;
+      for (let j = 0; j < vs.length; j++) { let sj = 0; for (let k = 0; k < K; k++) sj += sig(base + ut[k] + vs[j]); s += ws[j] * sj; }
+      P[off + g] = s / K;
+    }
+  }
+  return P;
+}
+function postW(logp) { let m = -Infinity; for (const v of logp) if (v > m) m = v; const w = new Float64Array(logp.length); let s = 0;
+  for (let i = 0; i < w.length; i++) { w[i] = Math.exp(logp[i] - m); s += w[i]; } for (let i = 0; i < w.length; i++) w[i] /= s; return w; }
+function moments(w, grid) { let m = 0, m2 = 0; for (let g = 0; g < grid.G; g++) { m += w[g] * grid.h[g]; m2 += w[g] * grid.h[g] * grid.h[g]; } return [m, Math.max(m2 - m * m, 0)]; }
+function marginalH(w, grid) { const out = new Float64Array(grid.nh); for (let i = 0; i < grid.nh; i++) { let s = 0; for (let j = 0; j < grid.nb; j++) s += w[i * grid.nb + j]; out[i] = s; } return out; }
+function quantH(w, grid, qs) { const mg = marginalH(w, grid), c = []; let s = 0; for (const v of mg) { s += v; c.push(s); }
+  return qs.map(q => { for (let i = 0; i < c.length; i++) if (c[i] >= q) { if (i === 0) return HS[0]; const f = (q - c[i - 1]) / (c[i] - c[i - 1]); return HS[i - 1] + f * (HS[i] - HS[i - 1]); } return HS[HS.length - 1]; }); }
+function evr(w, P, grid, t) {
+  const off = t * grid.G; let p1 = 0, s1 = 0, q1 = 0, s = 0, q = 0;
+  for (let g = 0; g < grid.G; g++) { const a = w[g] * P[off + g], h = grid.h[g]; p1 += a; s1 += a * h; q1 += a * h * h; s += w[g] * h; q += w[g] * h * h; }
+  const v = q - s * s, p0 = 1 - p1;
+  const v1 = p1 > 1e-300 ? q1 / p1 - (s1 / p1) ** 2 : 0;
+  const v0 = p0 > 1e-300 ? (q - q1) / p0 - ((s - s1) / p0) ** 2 : 0;
+  return v - (p1 * v1 + p0 * v0);
+}
+
+// ---------- session ----------
+const S = {};
+function bankFor(name) { return name === "__hypo" ? D.bank_all : D.banks_loo[name]; }
+function newSession() {
+  const name = $("agent").value, b = bankFor(name);
+  const key = `${name}|${b.mu_b}|${b.sd_b}`;
+  if (S.key !== key) { S.grid = makeGrid(b.mu_b, b.sd_b); S.P = predictive(D.tasks.x, b.u, S.grid); S.key = key; }
+  S.bank = b; S.name = name;
+  S.logp = new Float64Array(S.grid.G).fill(-Math.log(S.grid.G));
+  S.asked = []; S.trace = []; S.spent = 0; S.status = "ready"; S.running = false;
+  const seed = name === "__hypo" ? +$("seed").value : 1 + D.agents.findIndex(a => a.name === name);
+  S.rng = mulberry32(seed * 2654435761 >>> 0);
+  if (name === "__hypo") {
+    S.trueH = +$("hypoH").value; S.trueB = +$("hypoB").value;
+    S.uTrue = b.u.map(row => row[Math.floor(S.rng() * row.length)]);
+    const gauss = () => { let a = 0; while (a === 0) a = S.rng(); return Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * S.rng()); };
+    S.vTrue = b.u.map(() => (D.meta.sigma_v || 0) * gauss());
+    S.available = D.tasks.x.map((_, t) => t);
+  } else {
+    S.rates = D.rates[name]; S.available = Object.keys(S.rates).map(Number).sort((a, b) => a - b);
+  }
+  const fullTok = S.available.reduce((a, t) => a + D.tasks.cost[t], 0);
+  S.fullTok = fullTok;
+  S.policyState = { i: 0, order: null };
+  render();
+}
+function respond(t) {
+  if (S.name === "__hypo") return S.rng() < sig(S.trueB * (D.tasks.x[t] - S.trueH) + S.uTrue[t] + S.vTrue[t]) ? 1 : 0;
+  const [k, n] = S.rates[t]; return S.rng() < k / n ? 1 : 0;
+}
+function choose() {
+  const pol = document.querySelector("input[name=pol]:checked").value, av = S.available;
+  if (pol === "random") return av[Math.floor(S.rng() * av.length)];
+  if (pol === "midpass") { const c = av.filter(t => D.tasks.pass_rate[t] >= 0.3 && D.tasks.pass_rate[t] <= 0.7); const pool = c.length ? c : av; return pool[Math.floor(S.rng() * pool.length)]; }
+  if (pol === "stratified") {
+    const x = D.tasks.x, xmin = Math.min(...x), bin = t => Math.floor((x[t] - xmin) / 2);
+    if (!S.policyState.order) { const bins = [...new Set(x.map((_, t) => bin(t)))]; for (let i = bins.length - 1; i > 0; i--) { const j = Math.floor(S.rng() * (i + 1)); [bins[i], bins[j]] = [bins[j], bins[i]]; } S.policyState.order = bins; }
+    const ord = S.policyState.order;
+    for (let k = 0; k < ord.length; k++) { const b = ord[S.policyState.i++ % ord.length]; const c = av.filter(t => bin(t) === b); if (c.length) return c[Math.floor(S.rng() * c.length)]; }
+    return av[Math.floor(S.rng() * av.length)];
+  }
+  const gamma = pol === "cost1" ? 1 : pol === "cost05" ? 0.5 : 0;
+  const w = postW(S.logp); let best = -Infinity, bt = av[0];
+  for (const t of av) { const sc = evr(w, S.P, S.grid, t) / Math.pow(D.tasks.cost[t], gamma); if (sc > best) { best = sc; bt = t; } }
+  return bt;
+}
+function stepOnce() {
+  if (!S.available.length || S.status === "precise" || S.status === "saturated") return false;
+  const t = choose(), y = respond(t), off = t * S.grid.G;
+  for (let g = 0; g < S.grid.G; g++) { const p = Math.min(Math.max(S.P[off + g], 1e-12), 1 - 1e-12); S.logp[g] += y ? Math.log(p) : Math.log1p(-p); }
+  S.asked.push(t); S.spent += D.tasks.cost[t]; S.available = S.available.filter(v => v !== t);
+  const w = postW(S.logp), [m, v] = moments(w, S.grid), [lo, med, hi] = quantH(w, S.grid, [0.025, 0.5, 0.975]);
+  const xmax = Math.max(...D.tasks.x); let beyond = 0; for (let g = 0; g < S.grid.G; g++) if (S.grid.h[g] > xmax) beyond += w[g];
+  let bestE = 0; for (const tt of S.available) bestE = Math.max(bestE, evr(w, S.P, S.grid, tt));
+  S.trace.push({ t, y, tokens: S.spent, m, sd: Math.sqrt(v), lo, med, hi, beyond });
+  const target = +$("target").value;
+  if (Math.sqrt(v) <= target) S.status = "precise";
+  else if (bestE < 0.01 * v && beyond > 0.2) S.status = "saturated";
+  else if (!S.available.length) S.status = "exhausted";
+  else S.status = "running";
+  return S.status === "running";
+}
+async function runToStop() {
+  if (S.running) return; S.running = true; $("go").disabled = true; $("step").disabled = true;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let n = 0;
+  while (stepOnce() && n < 228) { n++; if (!reduce) { render(); await new Promise(r => setTimeout(r, 90)); } }
+  S.running = false; $("go").disabled = false; $("step").disabled = false; render();
+}
+
+// ---------- charts ----------
+const TICKS = [[-2.585,"10 s"],[0,"1 min"],[3.322,"10 min"],[5.907,"1 h"],[8.907,"8 h"],[10.49,"1 day"],[13.3,"1 week"]];
+function axisX(x0, x1, X, y, h) { let s = `<line class="axis" x1="${X(x0)}" x2="${X(x1)}" y1="${y}" y2="${y}"/>`;
+  for (const [v, l] of TICKS) if (v >= x0 - 1e-9 && v <= x1 + 1e-9) s += `<line class="gridl" x1="${X(v)}" x2="${X(v)}" y1="${y - h}" y2="${y}"/><text x="${X(v)}" y="${y + 15}" text-anchor="middle">${l}</text>`; return s; }
+function tipShow(e, html) { const t = $("tip"); t.innerHTML = html; t.hidden = false; const r = t.getBoundingClientRect();
+  let x = e.clientX + 14, y = e.clientY + 14; if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14; if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14; t.style.left = x + "px"; t.style.top = y + "px"; }
+function tipHide() { $("tip").hidden = true; }
+
+function drawPosterior() {
+  const svg = $("postChart"), W = 760, H = 250, L = 16, R = 16, T = 14, B = 34, x0 = -3, x1 = 15;
+  const X = v => L + (v - x0) / (x1 - x0) * (W - L - R);
+  const w = S.asked.length ? postW(S.logp) : new Float64Array(S.grid.G).fill(1 / S.grid.G);
+  const mg = marginalH(w, S.grid), dens = Array.from(mg, v => v / 0.1);
+  const vis = HS.map((h, i) => [h, dens[i]]).filter(([h]) => h >= x0 && h <= x1);
+  const ymax = Math.max(0.25, ...vis.map(v => v[1])) * 1.1, Y = v => H - B - v / ymax * (H - B - T);
+  let s = axisX(x0, x1, X, H - B, H - B - T);
+  const xmax = Math.max(...D.tasks.x);
+  s += `<rect x="${X(xmax)}" y="${T}" width="${X(x1) - X(xmax)}" height="${H - B - T}" fill="var(--warn-bg)" opacity=".7"/>`;
+  s += `<text x="${X(xmax) + 6}" y="${T + 12}" style="fill:var(--warn)">beyond the longest task (${fmtH(xmax)})</text>`;
+  const pts = vis.map(([h, d]) => `${X(h).toFixed(1)},${Y(d).toFixed(1)}`).join(" ");
+  s += `<polygon points="${X(vis[0][0])},${Y(0)} ${pts} ${X(vis[vis.length - 1][0])},${Y(0)}" fill="var(--s1)" opacity=".16"/>`;
+  s += `<polyline points="${pts}" fill="none" stroke="var(--s1)" stroke-width="2"/>`;
+  const marks = [];
+  if (S.name === "__hypo") marks.push([S.trueH, "true horizon", "var(--ink)"]);
+  else { const a = D.agents.find(a => a.name === S.name); marks.push([a.h_ref, "full-data estimate (IRT)", "var(--ink)"], [a.h_metr, "METR full-data p50", "var(--s2)"]); }
+  for (const [v, l, c] of marks) s += `<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}" stroke="${c}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  if (S.trace.length) { const tr = S.trace[S.trace.length - 1]; s += `<line x1="${X(tr.lo)}" x2="${X(tr.hi)}" y1="${H - B - 6}" y2="${H - B - 6}" stroke="var(--s1)" stroke-width="4" stroke-linecap="round"/>`; }
+  s += `<line id="pcross" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/><rect x="${L}" y="${T}" width="${W - L - R}" height="${H - B - T}" fill="transparent" id="phit"/>`;
+  svg.innerHTML = s;
+  $("postLegend").innerHTML = `<span><i class="sw" style="background:var(--s1)"></i>posterior, 95% interval bar</span>` + marks.map(([, l, c]) => `<span><i class="sw" style="background:${c}"></i>${l}</span>`).join("");
+  const hit = $("phit"), cross = $("pcross");
+  hit.onmousemove = e => { const r = svg.getBoundingClientRect(), vx = (e.clientX - r.left) / r.width * W, h = x0 + (vx - L) / (W - L - R) * (x1 - x0);
+    const i = Math.max(0, Math.min(HS.length - 1, Math.round((h - HS[0]) / 0.1))); let cum = 0; for (let k = 0; k <= i; k++) cum += mg[k];
+    cross.setAttribute("x1", X(HS[i])); cross.setAttribute("x2", X(HS[i])); cross.setAttribute("visibility", "visible");
+    tipShow(e, `<b>${fmtH(HS[i])}</b><br>P(horizon ≤ this) = ${(cum * 100).toFixed(1)}%`); };
+  hit.onmouseleave = () => { cross.setAttribute("visibility", "hidden"); tipHide(); };
+}
+function drawSD() {
+  const svg = $("sdChart"), W = 380, H = 220, L = 40, R = 12, T = 12, B = 32, tr = S.trace, target = +$("target").value;
+  const tmax = Math.max(1e4, S.fullTok), lx0 = 2, lx1 = Math.log10(tmax);
+  const X = t => L + (Math.log10(Math.max(t, 100)) - lx0) / (lx1 - lx0) * (W - L - R);
+  const ymax = Math.max(2, ...tr.map(r => r.sd)) * 1.05, Y = v => T + (1 - v / ymax) * (H - B - T);
+  let s = `<line class="axis" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/>`;
+  for (let p = Math.ceil(lx0); p <= Math.floor(lx1); p++) s += `<line class="gridl" x1="${X(10 ** p)}" x2="${X(10 ** p)}" y1="${T}" y2="${H - B}"/><text x="${X(10 ** p)}" y="${H - B + 15}" text-anchor="middle">${fmtTok(10 ** p)}</text>`;
+  for (const v of [0, 1, 2, 3, 4].filter(v => v <= ymax)) s += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  s += `<line x1="${L}" x2="${W - R}" y1="${Y(target)}" y2="${Y(target)}" stroke="var(--good)" stroke-dasharray="4 3"/><text x="${W - R}" y="${Y(target) - 5}" text-anchor="end" style="fill:var(--good)">target</text>`;
+  s += `<line x1="${X(S.fullTok)}" x2="${X(S.fullTok)}" y1="${T}" y2="${H - B}" stroke="var(--s2)" stroke-dasharray="4 3"/><text x="${X(S.fullTok) - 4}" y="${T + 10}" text-anchor="end" style="fill:var(--s2)">all tasks once</text>`;
+  if (tr.length) { let d = ""; tr.forEach((r, i) => { const x = X(r.tokens), y = Y(r.sd); d += i ? ` L${X(r.tokens).toFixed(1)},${Y(tr[i - 1].sd).toFixed(1)} L${x.toFixed(1)},${y.toFixed(1)}` : `M${x.toFixed(1)},${y.toFixed(1)}`; });
+    s += `<path d="${d}" fill="none" stroke="var(--s1)" stroke-width="2"/>`; const r = tr[tr.length - 1]; s += `<circle cx="${X(r.tokens)}" cy="${Y(r.sd)}" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/>`; }
+  s += `<text x="${L}" y="${T - 2}">SD of log₂ horizon</text>`;
+  svg.innerHTML = s;
+}
+function render() {
+  const tr = S.trace, last = tr[tr.length - 1];
+  $("rEst").textContent = last ? fmtH(last.med) : "–";
+  $("rCI").textContent = last ? `95%: ${fmtH(last.lo)} – ${fmtH(last.hi)}` : "no tasks run";
+  const st = { ready: ["Ready", "run"], running: ["Measuring", "run"], precise: ["Precise", "ok"], saturated: ["Suite saturated", "sat"], exhausted: ["Out of tasks", "crit"] }[S.status];
+  $("rStatus").textContent = st[0]; $("rStatus").className = "chip " + st[1];
+  $("rStatusNote").textContent = last ? `SD ${last.sd.toFixed(2)} doublings · ${(last.beyond * 100).toFixed(0)}% beyond suite` : " ";
+  $("rTasks").textContent = tr.length; $("rTasksNote").textContent = `of ${tr.length + S.available.length} available`;
+  $("rTok").textContent = fmtTok(S.spent); $("rTokNote").textContent = `${pct(S.spent / S.fullTok)} of running every task once (${fmtTok(S.fullTok)})`;
+  $("log").innerHTML = tr.slice().reverse().map((r, i) => `<tr><td class="num">${tr.length - i}</td><td class="mono">${esc(D.tasks.id[r.t])}</td><td class="r">${fmtMin(2 ** D.tasks.x[r.t])}</td><td class="r">${fmtTok(D.tasks.cost[r.t])}</td><td>${r.y ? '<span class="ok-t">✓ success</span>' : '<span class="no-t">✗ fail</span>'}</td><td class="r">${r.sd.toFixed(2)}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">Press “Run to stop” to start.</td></tr>`;
+  drawPosterior(); drawSD();
+}
+
+// ---------- measurement range ----------
+const ZQ = (() => { const z = [], w = []; for (let i = 0; i <= 240; i++) { const v = -6 + i * 0.05; z.push(v); w.push(Math.exp(-0.5 * v * v)); } const s = w.reduce((a, b) => a + b); return { z, w: w.map(v => v / s) }; })();
+// Fisher information over (h, beta); SE of h with the slope estimated (mirrors design.py, P16).
+function infoMatBank(h, beta) { const x = D.tasks.x, u = D.bank_all.u; let a = 0, b = 0, c = 0;
+  for (let t = 0; t < x.length; t++) { let p = 0, v = 0; const K = u[t].length; for (let k = 0; k < K; k++) { const s = sig(beta * (x[t] - h) + u[t][k]); p += s; v += s * (1 - s); }
+    p /= K; v /= K; const gh = -beta * v, gb = (x[t] - h) * v, d = Math.max(p * (1 - p), 1e-12); a += gh * gh / d; b += gh * gb / d; c += gb * gb / d; } return [a, b, c]; }
+function infoMatNew(h, beta, L, tau) { let p = 0, v = 0; for (let i = 0; i < ZQ.z.length; i++) { const s = sig(beta * (L - h) + tau * ZQ.z[i]); p += ZQ.w[i] * s; v += ZQ.w[i] * s * (1 - s); }
+  const gh = -beta * v, gb = (L - h) * v, d = Math.max(p * (1 - p), 1e-12); return [gh * gh / d, gh * gb / d, gb * gb / d]; }
+function seH([a, b, c], sdBeta) { const cc = c + 1 / (sdBeta * sdBeta); return Math.sqrt(cc / (a * cc - b * b)); }
+function drawRange() {
+  const svg = $("rangeChart"), W = 760, H = 280, L = 44, R = 16, T = 14, B = 34, x0 = 0, x1 = 14, c = D.frontier.se_curve;
+  const X = v => L + (v - x0) / (x1 - x0) * (W - L - R), ymax = 3, Y = v => T + (1 - Math.min(v, ymax) / ymax) * (H - B - T);
+  let s = axisX(x0, x1, X, H - B, H - B - T);
+  for (const v of [0, 0.5, 1, 2, 3]) s += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  s += `<line x1="${L}" x2="${W - R}" y1="${Y(0.5)}" y2="${Y(0.5)}" stroke="var(--good)" stroke-dasharray="4 3"/>`;
+  const series = [["se_one_run_per_task", "current suite", "var(--s1)"], ["se +20 × 32 h", "+20 tasks of 32 h", "var(--s3)"], ["se +20 × 1 week", "+20 tasks of 1 week", "var(--s4)"]];
+  s += `<polyline fill="none" stroke="var(--s1)" stroke-width="1.5" stroke-dasharray="5 4" opacity=".7" points="${c.h.map((h, i) => `${X(h).toFixed(1)},${Y(c.se_known_slope[i]).toFixed(1)}`).join(" ")}"/>`;
+  for (const [k, , col] of series) s += `<polyline fill="none" stroke="${col}" stroke-width="2" points="${c.h.map((h, i) => `${X(h).toFixed(1)},${Y(c[k][i]).toFixed(1)}`).join(" ")}"/>`;
+  const marks = [[Math.log2(718.9), "Opus 4.6"], [Math.log2(1044.8), "Mythos Preview*"], [Math.log2(2880), "48 h"], [Math.log2(10080), "1 week"]];
+  marks.forEach(([v, l], i) => { s += `<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-dasharray="2 3"/><text x="${X(v) + 4}" y="${T + 12 + (i % 2) * 13}">${l}</text>`; });
+  s += `<text x="${L}" y="${T - 2}">SE of log₂ horizon</text>`;
+  s += `<rect x="${L}" y="${T}" width="${W - L - R}" height="${H - B - T}" fill="transparent" id="rhit"/>`;
+  svg.innerHTML = s;
+  $("rangeLegend").innerHTML = series.map(([, l, col]) => `<span><i class="sw" style="background:${col}"></i>${l}</span>`).join("") + `<span><i class="sw" style="background:repeating-linear-gradient(90deg,var(--s1) 0 5px,transparent 5px 9px)"></i>current, if the slope were known</span><span><i class="sw" style="background:var(--good)"></i>±0.5 target</span>`;
+  $("rhit").onmousemove = e => { const r = svg.getBoundingClientRect(), vx = (e.clientX - r.left) / r.width * W, h = x0 + (vx - L) / (W - L - R) * (x1 - x0);
+    const i = Math.max(0, Math.min(c.h.length - 1, Math.round(h / 0.05))); tipShow(e, `<b>${fmtH(c.h[i])}</b><br>current: ±${c.se_one_run_per_task[i].toFixed(2)}<br>+20 × 32 h: ±${c["se +20 × 32 h"][i].toFixed(2)}<br>+20 × 1 week: ±${c["se +20 × 1 week"][i].toFixed(2)}`); };
+  $("rhit").onmouseleave = tipHide;
+}
+function updateDesign() {
+  const h = +$("dH").value, L = +$("dL").value, beta = D.bank_all.mu_b, tau = D.bank_all.tau, sdB = 1.5 * D.bank_all.sd_b;
+  $("dHv").textContent = fmtH(h); $("dLv").textContent = fmtH(L);
+  const I0 = infoMatBank(h, beta), In = infoMatNew(h, beta, L, tau);
+  const se = n => seH([I0[0] + n * In[0], I0[1] + n * In[1], I0[2] + n * In[2]], sdB);
+  let n = 0;
+  if (se(0) > 0.5) { if (se(10000) > 0.5) n = Infinity; else { let lo = 0, hi = 1; while (se(hi) > 0.5) { lo = hi; hi *= 2; } while (hi - lo > 1) { const m = (lo + hi) >> 1; if (se(m) > 0.5) lo = m; else hi = m; } n = hi; } }
+  $("dN").textContent = n === Infinity ? "> 10,000" : n.toLocaleString();
+  $("dSE").textContent = `now ±${se(0).toFixed(2)} doublings → ±0.50 (slope estimated)`;
+  const cm = D.frontier.cost_model, tok = Math.exp(cm.a + cm.b * L);
+  $("dTok").textContent = n === Infinity ? "–" : fmtTok(n * tok);
+  $("dTokNote").textContent = `${fmtTok(tok)} per run, extrapolated${L > Math.max(...D.tasks.x) ? " beyond the longest task" : ""}`;
+}
+
+// ---------- audit ----------
+const FLAG_TXT = { "unsolved-short": "Never solved, 1 hour or less: possibly broken, or human time underestimated",
+  "harder-than-length": "Harder than its length predicts by more than one τ", "easier-than-length": "Easier than its length predicts by more than one τ",
+  "no-variation": "Every agent always fails, or always succeeds: says little about any agent" };
+let auditFilter = null, auditSort = ["u", 1];
+function drawAudit() {
+  const svg = $("auditChart"), W = 760, H = 300, L = 40, R = 16, T = 14, B = 34, x0 = -6, x1 = 12, a = D.audit;
+  const X = v => L + (v - x0) / (x1 - x0) * (W - L - R), Y = v => T + (1 - (Math.max(-10, Math.min(8, v)) + 10) / 18) * (H - B - T);
+  const TK = [[-5.9, "1 s"], [-2.585, "10 s"], [0, "1 min"], [3.322, "10 min"], [5.907, "1 h"], [8.907, "8 h"], [10.49, "1 day"]];
+  let s = `<line class="axis" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/>`;
+  for (const [v, l] of TK) s += `<line class="gridl" x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}"/><text x="${X(v)}" y="${H - B + 15}" text-anchor="middle">${l}</text>`;
+  for (const v of [-8, -4, 0, 4, 8]) s += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v > 0 ? "+" + v : v}</text>`;
+  s += `<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--muted)"/>`;
+  const col = { HCAST: "var(--s1)", SWAA: "var(--s2)", "RE-Bench": "var(--s3)" };
+  a.forEach((r, i) => { const x = X(Math.log2(r.minutes)), y = Y(r.u), c = col[r.source] || "var(--muted)", fl = r.flags.filter(f => f !== "no-variation").length;
+    const shape = r.source === "SWAA" ? `<rect x="${x - 3.5}" y="${y - 3.5}" width="7" height="7" fill="${c}"/>` : r.source === "RE-Bench" ? `<path d="M${x},${y - 5} L${x + 5},${y} L${x},${y + 5} L${x - 5},${y} Z" fill="${c}"/>` : `<circle cx="${x}" cy="${y}" r="3.8" fill="${c}"/>`;
+    s += `<g data-i="${i}" class="pt" opacity="${auditFilter && !r.flags.includes(auditFilter) ? 0.18 : 0.9}">${fl ? `<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="var(--ink)" stroke-width="1.2"/>` : ""}${shape}<circle cx="${x}" cy="${y}" r="9" fill="transparent"/></g>`; });
+  svg.innerHTML = s;
+  $("auditLegend").innerHTML = `<span><i class="sw dot" style="background:var(--s1)"></i>HCAST</span><span><i class="sw" style="background:var(--s2);width:9px;height:9px"></i>SWAA</span><span><i class="sw dot" style="background:var(--s3)"></i>RE-Bench</span><span><i class="sw dot" style="border:1.2px solid var(--ink);background:none"></i>flagged</span>`;
+  svg.querySelectorAll(".pt").forEach(g => { const r = a[+g.dataset.i];
+    g.onmousemove = e => tipShow(e, `<span class="mono">${esc(r.id)}</span><br>${esc(r.source)} · ${fmtMin(r.minutes)} · solved ${pct(r.solve)}<br>û = ${r.u > 0 ? "+" : ""}${r.u} ± ${r.u_sd}${r.flags.length ? "<br>" + r.flags.map(esc).join(", ") : ""}`);
+    g.onmouseleave = tipHide; });
+}
+function drawAuditTable() {
+  const [k, dir] = auditSort;
+  const rows = D.audit.filter(r => !auditFilter || r.flags.includes(auditFilter)).slice().sort((p, q) => (p[k] > q[k] ? 1 : p[k] < q[k] ? -1 : 0) * dir);
+  $("auditRows").innerHTML = rows.map(r => `<tr><td class="mono">${esc(r.id)}</td><td>${esc(r.source)}</td><td class="r">${fmtMin(r.minutes)}</td><td class="r">${pct(r.solve)}</td><td class="r">${r.u > 0 ? "+" : ""}${r.u.toFixed(2)} ± ${r.u_sd.toFixed(2)}</td><td class="r">${r.info12h.toFixed(3)}</td><td class="r">${fmtTok(r.tokens)}</td><td>${r.flags.map(f => `<span class="chip flag">${f}</span>`).join(" ")}</td></tr>`).join("");
+}
+function setupAudit() {
+  const counts = {}; D.audit.forEach(r => r.flags.forEach(f => counts[f] = (counts[f] || 0) + 1));
+  const ff = $("flagFilters"); ff.innerHTML = `<button aria-pressed="true" data-f="">All ${D.audit.length}</button>` + Object.keys(FLAG_TXT).map(f => `<button aria-pressed="false" data-f="${f}">${f} ${counts[f] || 0}</button>`).join("");
+  ff.querySelectorAll("button").forEach(b => b.onclick = () => { auditFilter = b.dataset.f || null; ff.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawAudit(); drawAuditTable(); });
+  document.querySelectorAll("#p-audit th.sortable").forEach(th => th.onclick = () => { const k = th.dataset.k; auditSort = [k, auditSort[0] === k ? -auditSort[1] : 1]; drawAuditTable(); });
+  $("flagHelp").innerHTML = Object.entries(FLAG_TXT).map(([f, t]) => `<b>${f}</b>: ${t}.`).join(" ") + ` τ = ${D.bank_all.tau.toFixed(2)} logits. “Info @ 12 h” is the Fisher information one run gives about the horizon of a 12-hour agent.`;
+}
+
+// ---------- back-test ----------
+const POL = { cost1: ["Adaptive, cost-aware (γ = 1)", "var(--s1)"], cost05: ["Adaptive, γ = 0.5", "var(--s6)"], info: ["Adaptive, information only", "var(--s3)"],
+  random: ["Random", "var(--s2)"], stratified: ["Length-stratified", "var(--s4)"], midpass: ["Static 30–70% filter", "var(--s5)"] };
+function setupBack() {
+  const b = D.backtest, f = b.full_suite;
+  $("backIntro").textContent = `Each of the ${D.agents.length} agents is held out of the item bank in turn. When a policy asks for a task, one of that agent's actual runs on it is replayed: 20 replays per agent and policy, all with the same Bayesian estimator. Columns report the first point where the horizon is known to ±0.5 doublings (at most 80 tasks). Error and coverage are measured against the agent's estimate from all of its runs. Running every task once costs a median ${f.median_tokens_M.toFixed(1)} M tokens and gives SD ${f.median_sd.toFixed(2)}.`;
+  $("svText").textContent = `σv = ${b.calibration.best_sigma_v.toFixed(1)}`;
+  const order = ["cost1", "cost05", "info", "midpass", "stratified", "random"];
+  const by = Object.fromEntries(b.summary.map(r => [r.policy, r])), v1 = Object.fromEntries(b.summary_v1.map(r => [r.policy, r]));
+  const covChip = c => `<span class="chip ${c >= 0.9 ? "ok" : c >= 0.8 ? "sat" : "crit"}">${pct(c)}</span>`;
+  $("backRows").innerHTML = order.filter(p => by[p]).map(p => { const r = by[p]; return `<tr><td><i class="sw" style="background:${POL[p][1]};margin-right:8px"></i>${POL[p][0]}</td><td class="r">${pct(r.reach_rate)}</td><td class="r">${r.median_tasks}</td><td class="r">${r.median_tokens_M.toFixed(2)} M</td><td class="r">${pct(r.median_frac_full_tokens)}</td><td class="r">${r.median_abs_err_ref.toFixed(2)}</td><td class="r">${covChip(r.coverage95_ref)}</td><td class="r muted">${v1[p] ? `${v1[p].median_tokens_M.toFixed(2)} M · ${pct(v1[p].coverage95_ref)}` : "–"}</td></tr>`; }).join("")
+    + `<tr><td>Every task once</td><td class="r">–</td><td class="r">all</td><td class="r">${f.median_tokens_M.toFixed(1)} M</td><td class="r">100%</td><td class="r">${f.median_abs_err_ref.toFixed(2)}</td><td class="r">${covChip(f.coverage95_ref)}</td><td class="r muted">${f.median_tokens_M.toFixed(1)} M · ${pct(b.full_suite_v1.coverage95_ref)}</td></tr>`;
+  const cal = b.calibration;
+  $("calNote").textContent = `The agent-by-task scale σv = ${cal.best_sigma_v.toFixed(1)} was chosen by held-out predictive likelihood across agents. Its gain over σv = 0 is not statistically significant (bootstrap 95% CI ${cal.ci95_gain_bootstrap_agents[0].toFixed(0)} to +${cal.ci95_gain_bootstrap_agents[1].toFixed(0)} log-likelihood units), so coverage is checked here rather than assumed. Both settings give calibrated 95% intervals; σv = 0 is a little cheaper. Coverage is measured among replays that reached ±0.5. Chips mark coverage of at least 90% (green), 80–90% (amber) and below 80% (red).`;
+  const svg = $("backChart"), W = 760, H = 280, L = 40, R = 16, T = 14, B = 34, lx0 = -4, lx1 = 0;
+  const X = v => L + (Math.log10(v) - lx0) / (lx1 - lx0) * (W - L - R), ymax = 3, Y = v => T + (1 - Math.min(v, ymax) / ymax) * (H - B - T);
+  let s = `<line class="axis" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/>`;
+  for (const p of [-4, -3, -2, -1, 0]) s += `<line class="gridl" x1="${X(10 ** p)}" x2="${X(10 ** p)}" y1="${T}" y2="${H - B}"/><text x="${X(10 ** p)}" y="${H - B + 15}" text-anchor="middle">${p === 0 ? "100%" : (10 ** p * 100).toPrecision(1) + "%"}</text>`;
+  for (const v of [0, 0.5, 1, 2, 3]) s += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  s += `<line x1="${L}" x2="${W - R}" y1="${Y(0.5)}" y2="${Y(0.5)}" stroke="var(--good)" stroke-dasharray="4 3"/>`;
+  for (const p of order) { const c = b.curves[p]; if (!c) continue; const pts = c.frac.map((fr, i) => c.sd[i] == null ? null : `${X(fr).toFixed(1)},${Y(c.sd[i]).toFixed(1)}`).filter(Boolean).join(" ");
+    s += `<polyline fill="none" stroke="${POL[p][1]}" stroke-width="2" points="${pts}"/>`; }
+  s += `<text x="${L}" y="${T - 2}">median SD of log₂ horizon</text><text x="${W - R}" y="${H - 4}" text-anchor="end">share of the tokens needed to run every task once</text>`;
+  svg.innerHTML = s;
+  $("backLegend").innerHTML = order.map(p => `<span><i class="sw" style="background:${POL[p][1]}"></i>${POL[p][0]}</span>`).join("");
+}
+
+// ---------- frontier tables & new-models text ----------
+function setupFrontier() {
+  $("simRows").innerHTML = D.frontier.sims.map(r => `<tr><td>${esc(r.horizon)}</td><td>${esc(r.suite)}</td><td>${r.gamma === 0 ? "information only" : "cost-aware"}</td><td class="r">${pct(r.precision_reached)}</td><td class="r">${pct(r.saturated)}</td><td class="r">${r.median_sd.toFixed(2)}</td><td class="r">${pct(r.coverage95)}</td></tr>`).join("");
+  const o = D.frontier.opus46_replay, mr = D.frontier.measurable_range_minutes, ph = D.public_headlines;
+  $("newModels").innerHTML = `
+    <p>METR's public run data stops at Claude Opus 4.6 and GPT-5.3-Codex. For GPT-5.4, Gemini 3.1 Pro and Claude Mythos Preview, METR publishes headline horizons only (Mythos Preview: ${fmtMin(ph["Claude Mythos Preview (early)"].p50_min)}, 95% CI ${fmtMin(ph["Claude Mythos Preview (early)"].ci[0])} – ${fmtMin(ph["Claude Mythos Preview (early)"].ci[1])}), and METR excludes horizons above 16 hours from its trend. GPT-5.6 Sol, GPT-6.1 Sol and Claude Opus 5.5 do not appear on METR's page yet. Testing them needs:</p>
+    <ul>
+      <li><b>Per-run results on this task suite</b> (task, run, success). These come from METR, or from running the tasks yourself: model API access, the task environments (most HCAST and RE-Bench tasks are private), the Inspect harness with sandboxed containers, and on the order of 10<sup>6</sup> tokens per long-task run.</li>
+      <li><b>Longer tasks.</b> One run of every current task measures horizons to ±0.5 doublings only between ${fmtMin(mr[0])} and ${fmtMin(mr[1])}. In the replay of Claude Opus 4.6, the adaptive run stopped with ${Object.entries(o.stops).map(([k, v]) => `${v} × ${k}`).join(", ")} of 30, a median SD of ${o.median_sd.toFixed(2)} doublings and ${(o.median_p_beyond * 100).toFixed(0)}% of the posterior beyond the longest task.</li>
+      <li><b>Human baselines for those tasks.</b> The horizon scale is anchored on them.</li>
+    </ul>
+    <p>Use “Hypothetical agent” in <em>Run an evaluation</em> to see how a 1-day or 1-week horizon behaves on today's suite, and the calculator above to size the extension.</p>`;
+}
+
+// ---------- tabs & init ----------
+function $(id) { return document.getElementById(id); }
+function showTab(id) {
+  document.querySelectorAll("nav [role=tab]").forEach(b => { const on = b.id === id; b.setAttribute("aria-selected", on); $(b.getAttribute("aria-controls")).hidden = !on; });
+  try { localStorage.setItem("hcat-tab", id); } catch (e) {}
+  if (id === "t-range") { drawRange(); updateDesign(); }
+  if (id === "t-audit") { drawAudit(); drawAuditTable(); }
+  if (id === "t-back") setupBack();
+}
+async function init() {
+  try { D = await (await fetch("data.json")).json(); }
+  catch (e) { $("loading").textContent = "Could not load data.json, which is published next to this page. Reload to try again."; return; }
+  $("loading").hidden = true;
+  $("meta").textContent = `METR Time Horizon 1.1 · ${D.agents.length} agents · ${D.tasks.id.length} tasks · ${D.meta.n_runs.toLocaleString()} public runs · item bank from the IRT model of the companion study`;
+  const sel = $("agent");
+  const ags = D.agents.slice().sort((a, b) => b.h_ref - a.h_ref);
+  sel.innerHTML = `<optgroup label="Hypothetical agent">${'<option value="__hypo">Choose a horizon…</option>'}</optgroup><optgroup label="Replay real runs (agent held out of the bank)">${ags.map(a => `<option value="${esc(a.name)}">${esc(a.name.replace(" (Inspect)", ""))}</option>`).join("")}</optgroup>`;
+  sel.value = ags.find(a => a.name.startsWith("Claude Opus 4.5")) ? ags.find(a => a.name.startsWith("Claude Opus 4.5")).name : ags[0].name;
+  const syncHypo = () => { const hy = sel.value === "__hypo"; $("hypoFields").hidden = !hy; $("hypoHv").textContent = fmtH(+$("hypoH").value); $("hypoBv").textContent = (+$("hypoB").value).toFixed(2);
+    $("agentNote").textContent = hy ? "Responses are simulated from the bank model with these settings." : "Outcomes replay this agent's real METR runs; the agent is excluded from the item bank."; };
+  syncHypo();
+  sel.onchange = () => { syncHypo(); newSession(); };
+  ["hypoH", "hypoB", "seed"].forEach(id => $(id).oninput = () => { syncHypo(); newSession(); });
+  $("hypoB").value = D.bank_all.mu_b.toFixed(2); syncHypo();
+  $("target").oninput = () => { $("targetv").textContent = `±${(+$("target").value).toFixed(2)} doublings (×${(2 ** +$("target").value).toFixed(2)})`; if (S.trace) render(); };
+  $("target").oninput();
+  document.querySelectorAll("input[name=pol]").forEach(r => r.onchange = newSession);
+  $("go").onclick = runToStop; $("step").onclick = () => { stepOnce(); render(); }; $("reset").onclick = newSession;
+  ["dH", "dL"].forEach(id => $(id).oninput = updateDesign);
+  document.querySelectorAll("nav [role=tab]").forEach(b => b.onclick = () => showTab(b.id));
+  $("p-run").hidden = false;
+  setupAudit(); setupFrontier();
+  $("svText").textContent = `σv = ${D.meta.sigma_v.toFixed(1)}`;
+  newSession();
+  let tab = "t-run"; try { tab = localStorage.getItem("hcat-tab") || "t-run"; } catch (e) {}
+  const hash = location.hash.replace("#", ""); if (["run", "range", "audit", "back", "method"].includes(hash)) tab = "t-" + hash;
+  showTab(tab);
+  if (tab === "t-run") { for (let i = 0; i < 12 && stepOnce(); i++); render(); }   // open in a working state
+}
+init();
+</script>

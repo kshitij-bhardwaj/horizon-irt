@@ -1,0 +1,30 @@
+{
+  "mu_b": -1.1318103249806113,
+  "tau": 2.917883903254647,
+  "longest_task_log2": 10.813781191217037,
+  "measurable_range_log2": [
+    0.0,
+    10.0
+  ],
+  "measurable_range_minutes": [
+    1.0,
+    1024.0
+  ],
+  "cost_model": {
+    "a": 8.261289446690839,
+    "b": 0.6447209186487407
+  },
+  "opus46_se_design": 0.5024768564737673,
+  "opus46_replay": {
+    "stops": {
+      "max_tasks": 29,
+      "precision": 1
+    },
+    "median_sd": 0.7629872567227544,
+    "median_ci_minutes": [
+      164.91128689377035,
+      1400.866301935387
+    ],
+    "median_p_beyond": 0.011217757375248823
+  }
+}
