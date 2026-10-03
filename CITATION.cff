@@ -2,7 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software or its results, please cite it, and cite METR (Kwa et al., 2025) for the data and BRIDGE (Liu et al., 2026) for the human-time anchoring."
 title: "horizon-irt: an item-response analysis of AI time horizons and cost-aware adaptive measurement (HorizonCAT)"
 authors:
-  - name: "horizon-irt contributors"
+  - family-names: Bhardwaj
+    given-names: Kshitij
 type: software
 license: MIT
 repository-code: "https://github.com/kshitij-bhardwaj/horizon-irt"

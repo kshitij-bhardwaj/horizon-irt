@@ -149,9 +149,9 @@ Known limitations:
 If you use this work, please cite it together with the work it builds on:
 
 ```bibtex
-@software{horizon_irt_2026,
+@software{bhardwaj2026horizonirt,
   title  = {horizon-irt: An item-response analysis of AI time horizons and cost-aware adaptive measurement (HorizonCAT)},
-  author = {{horizon-irt contributors}},
+  author = {Bhardwaj, Kshitij},
   year   = {2026},
   url    = {https://github.com/kshitij-bhardwaj/horizon-irt}
 }
