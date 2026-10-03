@@ -47,7 +47,8 @@ This repository studies that estimator as a measurement problem, in three parts:
 - Shrinking slopes toward their common mean, instead of toward zero, cuts Claude Opus 4.6's confidence-interval width from 3.8 to 2.1 doublings without changing the trend.
 
 **HorizonCAT.**
-- Replaying 20 held-out agents' real runs, information-driven selection pins the horizon to ±0.5 doublings in **95%** of replays, using **about 8% of the tokens** needed to run every task once. The 95% intervals are calibrated.
+- Replaying 20 held-out agents' real runs, information-driven selection pins the horizon to ±0.5 doublings in **95%** of replays, with calibrated 95% intervals.
+- It uses a median of **8% of the tokens** needed to run every task once, but this depends strongly on the agent: about 1% for GPT-4-era agents, versus **31–71% for frontier agents** (GPT-5 to Claude Opus 4.6). For those, only long, expensive tasks are informative.
 - With the agent's slope treated as unknown, the current suite can measure horizons only up to about **17 hours**. This independently matches METR's own choice to exclude horizons above 16 hours from its trend.
 
 <p align="center">
@@ -111,7 +112,7 @@ Full reproduction commands for every experiment are in [`study/README.md`](study
 METR's public per-run data ends with **Claude Opus 4.6 and GPT-5.3-Codex**. METR publishes only headline numbers for GPT-5.4, Gemini 3.1 Pro and Claude Mythos Preview, and nothing yet for models such as GPT-5.6 Sol, GPT-6.1 Sol or Claude Opus 5.5. Our analysis also suggests those models are past the point where the current task suite can measure them. Extending this work needs help in four areas:
 
 1. **Per-run results for newer models** on METR's task suite: per-task success counts are enough, no transcripts. From METR, from labs, or from anyone with research access to the tasks. → [Share run data](../../issues/new?template=share-run-data.md)
-2. **API credits or compute** to run newer models on the tasks through [Inspect](https://github.com/UKGovernmentBEIS/inspect_ai). HorizonCAT needs only a fraction of the full suite: in the replay, about 8% of the tokens for ±0.5 doublings.
+2. **API credits or compute** to run newer models on the tasks through [Inspect](https://github.com/UKGovernmentBEIS/inspect_ai). HorizonCAT reduces the cost, though least at the frontier: a median of 8% of the full suite in the replay, and 31–71% for frontier agents.
 3. **Long tasks (32 hours to a week) with human baselines.** Per our design analysis, measuring a 48-hour horizon to ±0.5 doublings needs about **19 one-week tasks** or **41 tasks of 32 hours**; a one-week horizon needs about **48 one-week tasks**.
 4. **Review and collaboration** from people in psychometrics and AI-evaluation methodology: model checks, better task-difficulty features, and budget-constrained adaptive designs.
 

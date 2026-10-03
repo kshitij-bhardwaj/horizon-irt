@@ -26,7 +26,7 @@ Write one JSON object per run:
 .venv/bin/python extend/horizoncat_cli.py estimate --runs runs.jsonl
 ```
 
-In the replay back-test, information-driven selection (`--gamma 0`, the default) reached ±0.5 doublings with a median of 24 tasks and about 8% of the tokens needed to run every task once. If the tool reports **SATURATED**, the model's horizon is beyond what this suite can measure. `prototype/frontier.py` computes how many longer tasks would be needed.
+In the replay back-test, information-driven selection (`--gamma 0`, the default) reached ±0.5 doublings with a median of 24 tasks. It used about 1% of the full suite's tokens for GPT-4-era agents, but 31–71% for frontier agents, so expect larger budgets for newer models. If the tool reports **SATURATED**, the model's horizon is beyond what this suite can measure. `prototype/frontier.py` computes how many longer tasks would be needed.
 
 ## 3. Share results (if you can)
 
