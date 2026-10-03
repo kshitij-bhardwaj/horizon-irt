@@ -514,8 +514,10 @@ function drawRange() {
   for (const [k, , col] of series) s += `<polyline fill="none" stroke="${col}" stroke-width="2" points="${c.h.map((h, i) => `${X(h).toFixed(1)},${Y(c[k][i]).toFixed(1)}`).join(" ")}"/>`;
   // [log2 minutes, label, side of the line, row]: Opus 4.6 and Mythos Preview sit ~27 px apart, so their labels face away from each other.
   const marks = [[Math.log2(718.9), "Opus 4.6", "left", 0], [Math.log2(1044.8), "Mythos Preview*", "right", 0], [Math.log2(2880), "48 h", "right", 1], [Math.log2(10080), "1 week", "right", 0]];
+  // Lines first, then labels with a surface-coloured halo, so no marker line is drawn over any label.
+  marks.forEach(([v]) => { s += `<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-dasharray="2 3"/>`; });
   marks.forEach(([v, l, side, row]) => { const left = side === "left";
-    s += `<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-dasharray="2 3"/><text x="${X(v) + (left ? -4 : 4)}" y="${T + 12 + row * 14}" text-anchor="${left ? "end" : "start"}" style="paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round">${l}</text>`; });
+    s += `<text x="${X(v) + (left ? -4 : 4)}" y="${T + 12 + row * 14}" text-anchor="${left ? "end" : "start"}" style="paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round">${l}</text>`; });
   s += `<text x="${L}" y="${T - 2}">SE of log₂ horizon</text>`;
   s += `<rect x="${L}" y="${T}" width="${W - L - R}" height="${H - B - T}" fill="transparent" id="rhit"/>`;
   svg.innerHTML = s;
